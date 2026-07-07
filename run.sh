@@ -63,10 +63,17 @@ until mysqladmin ping --socket=/var/run/mysqld/mysqld.sock -u root --silent 2>/d
 done
 echo "MariaDB is ready."
 
-mysql -u root -e "CREATE DATABASE sql_injection;"
-mysql -u root sql_injection < /var/www/html/lab/sql-injection/dump.sql
-mysql -u root -e "CREATE USER 'sql_injection'@'localhost' IDENTIFIED BY '';"
-mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'sql_injection'@'localhost';"
+echo "Creating sql_injection database..."
+timeout 10 mysql --socket=/var/run/mysqld/mysqld.sock -u root -e "CREATE DATABASE sql_injection;" || echo "Warning: Failed to create database"
+
+echo "Importing sql_injection dump..."
+timeout 10 mysql --socket=/var/run/mysqld/mysqld.sock -u root sql_injection < /var/www/html/lab/sql-injection/dump.sql || echo "Warning: Failed to import dump"
+
+echo "Creating sql_injection user..."
+timeout 10 mysql --socket=/var/run/mysqld/mysqld.sock -u root -e "CREATE USER 'sql_injection'@'localhost' IDENTIFIED BY '';" || echo "Warning: Failed to create user"
+
+echo "Granting privileges to sql_injection user..."
+timeout 10 mysql --socket=/var/run/mysqld/mysqld.sock -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'sql_injection'@'localhost';" || echo "Warning: Failed to grant privileges"
 
 # Run Apache:
 if [ $LOG_LEVEL == 'debug' ]; then
