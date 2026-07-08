@@ -42,6 +42,7 @@ RUN rm -rf /var/www/html/index.html
 COPY ./app/ /var/www/html
 COPY run.sh /usr/sbin/
 
+RUN sed -i 's/Listen 80/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
 RUN a2enmod rewrite
 RUN chmod +x /usr/sbin/run.sh
 RUN chown -R www-data:www-data /var/www/html
