@@ -46,27 +46,27 @@ fi
 # Set PHP timezone
 /bin/sed -i "s/\;date\.timezone\ \=/date\.timezone\ \=\ ${DATE_TIMEZONE}/" /etc/php/7.4/apache2/php.ini
 
-# Run MariaDB
-/usr/bin/mysqld_safe --timezone=${DATE_TIMEZONE}&
+# Run MariaDB (disabled — was hanging and blocking Apache startup)
+# /usr/bin/mysqld_safe --timezone=${DATE_TIMEZONE}&
 
 # Wait for MariaDB to be fully ready before running SQL commands
-echo "Waiting for MariaDB to be ready..."
-MAX_TRIES=30
-COUNT=0
-until mysqladmin ping --socket=/var/run/mysqld/mysqld.sock -u root --silent 2>/dev/null; do
-    COUNT=$((COUNT + 1))
-    if [ "$COUNT" -ge "$MAX_TRIES" ]; then
-        echo "ERROR: MariaDB did not become ready after ${MAX_TRIES} seconds. Aborting."
-        exit 1
-    fi
-    sleep 1
-done
-echo "MariaDB is ready."
+# echo "Waiting for MariaDB to be ready..."
+# MAX_TRIES=30
+# COUNT=0
+# until mysqladmin ping --socket=/var/run/mysqld/mysqld.sock -u root --silent 2>/dev/null; do
+#     COUNT=$((COUNT + 1))
+#     if [ "$COUNT" -ge "$MAX_TRIES" ]; then
+#         echo "ERROR: MariaDB did not become ready after ${MAX_TRIES} seconds. Aborting."
+#         exit 1
+#     fi
+#     sleep 1
+# done
+# echo "MariaDB is ready."
 
-mysql -u root -e "CREATE DATABASE sql_injection;"
-mysql -u root sql_injection < /var/www/html/lab/sql-injection/dump.sql
-mysql -u root -e "CREATE USER 'sql_injection'@'localhost' IDENTIFIED BY '';"
-mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'sql_injection'@'localhost';"
+# mysql -u root -e "CREATE DATABASE sql_injection;"
+# mysql -u root sql_injection < /var/www/html/lab/sql-injection/dump.sql
+# mysql -u root -e "CREATE USER 'sql_injection'@'localhost' IDENTIFIED BY '';"
+# mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'sql_injection'@'localhost';"
 
 # Run Apache:
 if [ $LOG_LEVEL == 'debug' ]; then
