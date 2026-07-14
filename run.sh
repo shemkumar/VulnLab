@@ -70,7 +70,7 @@ fi
 
 # Run Apache:
 if [ $LOG_LEVEL == 'debug' ]; then
-    /usr/sbin/apachectl -DFOREGROUND -k start -e debug
+    /usr/sbin/apachectl -DFOREGROUND -e debug
 else
-    &>/dev/null /usr/sbin/apachectl -DFOREGROUND -k start
+    /usr/sbin/apachectl -DFOREGROUND
 fi
