@@ -19,7 +19,7 @@
 
 
         $select = $db -> prepare("SELECT * FROM csrf_changing_password WHERE authority=:authority AND password=:password");
-        $select -> execute(array('authority' => $username,'password' => $password));
+        $select -> execute(array('authority' => $username, 'password' => $password));
         $_select = $select -> fetch();
 
         if( isset($_select['id']) ){
